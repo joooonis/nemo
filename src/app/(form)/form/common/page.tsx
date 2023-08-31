@@ -5,7 +5,7 @@ import Spinner from '@/components/common/Spinner';
 import { Schedule } from '@/types';
 import { dateToFormatString } from '@/utils/date';
 import { fetcher } from '@/utils/swrFetcher';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
 export default function Page() {
@@ -24,6 +24,14 @@ export default function Page() {
         <Spinner />
       </div>
     );
+
+  const router = useRouter();
+
+  const handleShareLink = () => {
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_WEB_URL}/form/new?id=${id}`
+    );
+  };
 
   return (
     <div className='relativ flex w-full flex-col justify-start items-center'>
@@ -113,8 +121,10 @@ export default function Page() {
         </div>
       </div>
       <div className='flex flex-col fixed max-w-xl bottom-0 justify-between px-4 pb-6 space-y-3 w-full'>
-        <Button variant='outline'>친구들에게 공유하기</Button>
-        <Button>메인으로 돌아가기</Button>
+        <Button onClick={handleShareLink} variant='outline'>
+          친구들에게 공유하기
+        </Button>
+        <Button onClick={() => router.push('/home')}>메인으로 돌아가기</Button>
       </div>
     </div>
   );
