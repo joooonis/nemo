@@ -17,6 +17,7 @@ export default function Page() {
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules/common?id=${id}`,
     fetcher
   );
+  const router = useRouter();
 
   if (isLoading)
     return (
@@ -24,8 +25,6 @@ export default function Page() {
         <Spinner />
       </div>
     );
-
-  const router = useRouter();
 
   const handleShareLink = () => {
     navigator.clipboard.writeText(
