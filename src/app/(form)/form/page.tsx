@@ -18,19 +18,25 @@ interface Inputs {
 
 export default function Page() {
   const searchParams = useSearchParams();
+
+  const originName = searchParams.get('originName');
+  const origin = searchParams.get('origin');
+  const destinationName = searchParams.get('destinationName');
+  const destination = searchParams.get('destination');
+
   const {
     register,
     handleSubmit,
-    watch,
     formState: { isValid },
   } = useForm<Inputs>({
     defaultValues: {
-      originName: searchParams.get('originName') || '',
-      origin: searchParams.get('origin') || '',
-      destinationName: searchParams.get('destinationName') || '',
-      destination: searchParams.get('destination') || '',
+      originName: originName || '',
+      origin: origin || '',
+      destinationName: destinationName || '',
+      destination: destination || '',
     },
   });
+
   const onSubmit = (data: Inputs) => console.log(data);
 
   return (
@@ -68,7 +74,7 @@ export default function Page() {
           {...register('arrivalTime', { required: true })}
           id='arrivalTime'
           type='time'
-          className='mt-1.5 py-3 px-4  text-center block w-full border border-line placeholder:text-gray-03 focus:border focus:outline-none rounded-xl text-sm focus:border-primary-main'
+          className='mt-1.5 py-3 px-4 text-center block w-full border border-line placeholder:text-gray-03 focus:border focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
         <label
           htmlFor='destinationName'
@@ -86,13 +92,9 @@ export default function Page() {
               destination: searchParams.get('destination'),
             },
           }}>
-          <input
-            {...register('originName', { required: true })}
-            id='orignName'
-            type='text'
-            placeholder='출발지 입력'
-            className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
-          />
+          <div className='text-gray-03 mt-1.5 py-3 px-4 text-left block w-full border border-line rounded-xl text-sm'>
+            {originName || '출발지 입력'}
+          </div>
         </Link>
         <Link
           className='w-full'
@@ -105,13 +107,9 @@ export default function Page() {
               destination: searchParams.get('destination'),
             },
           }}>
-          <input
-            {...register('destinationName', { required: true })}
-            id='destinationName'
-            type='text'
-            placeholder='도착지 입력'
-            className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
-          />
+          <div className='text-gray-03 mt-1.5 py-3 px-4 text-left block w-full border border-line rounded-xl text-sm'>
+            {destinationName || '도착지 입력'}
+          </div>
         </Link>
         <label
           htmlFor='memo'

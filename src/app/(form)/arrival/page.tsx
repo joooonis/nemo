@@ -1,7 +1,7 @@
 'use client';
 import useSWR from 'swr';
-import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 import Spinner from '@/components/common/Spinner';
 import Link from 'next/link';
@@ -9,28 +9,56 @@ import { fetcherKakao } from '@/utils/swrFetcher';
 export default function Page() {
   const searchParams = useSearchParams();
 
-  const longitude = searchParams.get('longitude');
-  const latitude = searchParams.get('latitude');
+  const [latitude, setLatitude] = useState<number>();
+  const [longitude, setLongitude] = useState<number>();
+
   const originName = searchParams.get('originName');
   const origin = searchParams.get('origin');
 
   const [query, setQuery] = useState('');
-
+  const router = useRouter();
   const debouceQuery = useDebounce(query, 1000);
 
   const { data, isLoading } = useSWR(
     () =>
       debouceQuery &&
+      longitude &&
+      latitude &&
       `https://dapi.kakao.com/v2/local/search/keyword.json?x=${longitude}&y=${latitude}&query=${debouceQuery}`,
     fetcherKakao
   );
 
   const { documents } = data || {};
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  }, []);
+
   return (
     <div className='relative flex flex-col justify-start items-center w-full mx-auto'>
       <header className='z-10 flex text-lg fixed max-w-xl top-0 p-4 font-semibold items-center bg-black justify-between w-full'>
         <div className='relative w-full'>
+          <div
+            onClick={() => router.back()}
+            className='absolute inset-y-0 left-0 flex items-center pl-1.5 pointer-events-none'>
+            <svg
+              width='24'
+              height='24'
+              viewBox='0 0 24 24'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'>
+              <path
+                d='M15 18L9 12L15 6'
+                stroke='#7B7B7B'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </div>
           <div
             onClick={() => setQuery('')}
             className='absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none'>
@@ -54,7 +82,7 @@ export default function Page() {
             onChange={(e) => setQuery(e.target.value)}
             value={query}
             placeholder='도착지를 입력하세요'
-            className='focus:border-none focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-4 pr-16'
+            className='focus:border-none  text-base placeholder:font-normal placeholder:text-base focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-8 pr-16'
           />
         </div>
       </header>
@@ -77,7 +105,6 @@ export default function Page() {
                   },
                 }}
                 key={document.id}>
-                {' '}
                 <li className='flex w-full px-4 items-center justify-around'>
                   <div className='pr-5 pl-0 justify-center items-center flex flex-col'>
                     <svg
@@ -94,7 +121,7 @@ export default function Page() {
                       />
                     </svg>
                     <p className='text-[#CCCCCC] text-xs mt-1'>
-                      {meterToKm(document.distance)}m
+                      {meterToKm(document.distance)}
                     </p>
                   </div>
                   <div className='flex flex-col py-3 justify-center items-center font-medium relative w-full'>
@@ -119,7 +146,7 @@ export default function Page() {
 
 const meterToKm = (meter: number) => {
   if (meter < 1000) {
-    return meter;
+    return meter + 'm';
   }
-  return Math.round(meter * 100) / 100;
+  return (meter / 1000).toFixed(1) + 'km';
 };

@@ -1,7 +1,7 @@
 'use client';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 import Spinner from '@/components/common/Spinner';
 import Link from 'next/link';
@@ -9,8 +9,8 @@ import { fetcherKakao } from '@/utils/swrFetcher';
 export default function Page() {
   const searchParams = useSearchParams();
 
-  const longitude = searchParams.get('longitude');
-  const latitude = searchParams.get('latitude');
+  const [latitude, setLatitude] = useState<number>();
+  const [longitude, setLongitude] = useState<number>();
 
   const destinationName = searchParams.get('destinationName');
   const destination = searchParams.get('destination');
@@ -21,11 +21,20 @@ export default function Page() {
   const { data, isLoading } = useSWR(
     () =>
       debouceQuery &&
+      longitude &&
+      latitude &&
       `https://dapi.kakao.com/v2/local/search/keyword.json?x=${longitude}&y=${latitude}&query=${debouceQuery}`,
     fetcherKakao
   );
 
   const { documents } = data || {};
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  }, []);
 
   return (
     <div className='relative flex flex-col justify-start items-center w-full mx-auto'>
