@@ -57,6 +57,10 @@ async function getSchedulesMap(): Promise<Record<string, Schedule[]>> {
     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`
   );
   const schedules: Schedule[] = await res.json();
+  schedules.sort(
+    (a, b) =>
+      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
+  );
   const record: Record<string, Schedule[]> = {};
   schedules?.slice(1)?.forEach((schedule) => {
     const date = format(new Date(schedule.departureTime), 'yyyy-MM-dd');
@@ -72,8 +76,14 @@ async function getSchedulesMap(): Promise<Record<string, Schedule[]>> {
 
 async function getRecentSchedule(): Promise<Schedule> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`,
+    { next: { revalidate: 3600 } }
   );
   const schedules: Schedule[] = await res.json();
-  return schedules[0];
+  const recentSchedule = schedules?.sort(
+    (a, b) =>
+      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
+  )[0];
+
+  return recentSchedule;
 }
