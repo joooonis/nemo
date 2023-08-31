@@ -33,6 +33,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     fetcher
   );
 
+  const { data: userData } = useSWR(
+    'http://52.78.165.207:8080/api/v1/schedules'
+  );
+
   const userLocation = data?.documents[0].address_name;
 
   useEffect(() => {

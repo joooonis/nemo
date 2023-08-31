@@ -68,7 +68,7 @@ export default function Page() {
       </header>
       <div className='flex w-full flex-col justify-start items-center mt-8'>
         {isLoading ? (
-          <div className='w-full mt-4'>
+          <div className='w-full flex justify-center mt-4'>
             <Spinner />
           </div>
         ) : (
