@@ -1,10 +1,13 @@
-import Button from '@/components/common/Button';
+'use client';
+
+import { useRouter } from 'next/navigation';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   return (
     <div className='relative flex flex-col justify-start items-center w-full mx-auto'>
       <header className='z-10 flex text-lg fixed max-w-xl top-0 p-4 font-semibold items-center bg-white justify-between w-full'>
-        <span>
+        <span onClick={() => router.back()}>
           <svg
             width='24'
             height='24'
@@ -25,9 +28,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
       <div className='flex w-full flex-col justify-start items-center mt-4'>
         {children}
-      </div>
-      <div className='flex fixed  max-w-xl bottom-0 justify-between px-4 pb-6 w-full'>
-        <Button>일정 만들기</Button>
       </div>
     </div>
   );

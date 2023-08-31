@@ -1,29 +1,40 @@
 'use client';
 
+import Button from '@/components/common/Button';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-interface FormValues {
-  title: string;
-  date: string;
+interface Inputs {
+  name: string;
+  arrivalTime: string;
   originName: string;
   destinationName: string;
   memo: string;
 }
 
 export default function Page() {
+  const searchParams = useSearchParams();
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+    formState: { isValid },
+  } = useForm<Inputs>({
+    defaultValues: {
+      originName: searchParams.get('originName') || '',
+    },
+  });
+  const onSubmit = (data: Inputs) => console.log(data);
+
   return (
     <div className='relativ flex w-full flex-col justify-start items-center'>
       <h2 className='text-left w-full mt-4 text-xl font-normal'>
         어떤 일정을 만드시나요?
       </h2>
-      <form className='w-full flex-col flex items-center mt-4'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='w-full flex-col flex items-center mt-4'>
         <input
+          {...register('name', { required: true })}
           type='text'
           maxLength={20}
           placeholder='일정 이름을 입력해주세요'
@@ -35,9 +46,9 @@ export default function Page() {
           날짜와 시간
         </label>
         <input
+          {...register('arrivalTime', { required: true })}
           id='date'
           type='date'
-          placeholder='일정 이름을 입력해주세요'
           className='mt-1.5 py-3 px-4 focus:border text-center block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
         <label
@@ -46,12 +57,14 @@ export default function Page() {
           약속장소 등록
         </label>
         <input
+          {...register('originName', { required: true })}
           id='orignName'
           type='text'
           placeholder='출발지 입력'
           className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
         <input
+          {...register('destinationName', { required: true })}
           id='destinationName'
           type='text'
           placeholder='도착지 입력'
@@ -63,11 +76,16 @@ export default function Page() {
           일정 메모
         </label>
         <textarea
+          {...register('memo')}
           id='memo'
+          rows={5}
           maxLength={30}
           placeholder='일정에 대해 메모를 남겨주세요. (선택)'
           className='mt-1.5 py-3 px-4 focus:border resize-none text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
+        <div className='flex fixed max-w-xl bottom-0 justify-between px-4 pb-6 w-full'>
+          <Button disabled={!isValid}>일정 만들기</Button>
+        </div>
       </form>
     </div>
   );

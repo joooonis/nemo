@@ -33,6 +33,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     fetcher
   );
 
+  const userLocation = data?.documents[0].address_name;
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (position) {
       setLatitude(position.coords.latitude);
@@ -69,11 +71,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               />
             </svg>
           </span>
-          {data.documents[0].address_name}
+          {userLocation}
         </h3>
         <div className='space-y-2'>
           <div className='w-full'>
-            <Search placeholder={data.documents[0].address_name} />
+            <Search placeholder={userLocation} />
           </div>
           <div className='w-full'>
             <Search placeholder='목적지를 입력해주세요' />
@@ -84,7 +86,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <FixedBottom>
-        <Link className='w-full' href='/form'>
+        <Link
+          className='w-full'
+          href={{
+            pathname: '/form',
+            query: { originName: userLocation },
+          }}>
           <Button>새로운 일정 추가</Button>
         </Link>
       </FixedBottom>
