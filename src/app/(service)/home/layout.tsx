@@ -86,7 +86,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           className='w-full'
           href={{
             pathname: '/form',
-            query: { originName: userLocation },
+            query: {
+              originName: userLocation,
+              origin: `${longitude},${latitude}`,
+            },
           }}>
           <Button>새로운 일정 추가</Button>
         </Link>
