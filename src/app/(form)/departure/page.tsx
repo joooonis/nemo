@@ -1,7 +1,7 @@
 'use client';
 import useSWR from 'swr';
 import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 import Spinner from '@/components/common/Spinner';

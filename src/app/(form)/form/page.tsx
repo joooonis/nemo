@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/common/Button';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
@@ -20,6 +21,7 @@ export default function Page() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { isValid },
   } = useForm<Inputs>({
     defaultValues: {
@@ -73,20 +75,44 @@ export default function Page() {
           className='text-gray-02 text-sm w-full text-left mt-7'>
           약속장소 등록
         </label>
-        <input
-          {...register('originName', { required: true })}
-          id='orignName'
-          type='text'
-          placeholder='출발지 입력'
-          className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
-        />
-        <input
-          {...register('destinationName', { required: true })}
-          id='destinationName'
-          type='text'
-          placeholder='도착지 입력'
-          className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
-        />
+        <Link
+          className='w-full'
+          href={{
+            pathname: '/departure',
+            query: {
+              originName: searchParams.get('originName'),
+              origin: searchParams.get('origin'),
+              destinationName: searchParams.get('destinationName'),
+              destination: searchParams.get('destination'),
+            },
+          }}>
+          <input
+            {...register('originName', { required: true })}
+            id='orignName'
+            type='text'
+            placeholder='출발지 입력'
+            className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
+          />
+        </Link>
+        <Link
+          className='w-full'
+          href={{
+            pathname: '/arrival',
+            query: {
+              originName: searchParams.get('originName'),
+              origin: searchParams.get('origin'),
+              destinationName: searchParams.get('destinationName'),
+              destination: searchParams.get('destination'),
+            },
+          }}>
+          <input
+            {...register('destinationName', { required: true })}
+            id='destinationName'
+            type='text'
+            placeholder='도착지 입력'
+            className='mt-1.5 py-3 px-4 focus:border text-left block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
+          />
+        </Link>
         <label
           htmlFor='memo'
           className='text-gray-02 text-sm w-full text-left mt-7'>
@@ -106,9 +132,4 @@ export default function Page() {
       </form>
     </div>
   );
-}
-
-interface InputProps {
-  placeholder?: string;
-  size?: 'sm' | 'lg';
 }
