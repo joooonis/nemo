@@ -21,11 +21,9 @@ function Search({ placeholder }: SearchProps) {
           />
         </svg>
       </div>
-      <input
-        type='text'
-        className='border-none focus:outline-none focus:border-transparent w-full h-10 text-gray-900 rounded-lg focus:border focus:ring-1 focus:ring-gray-02 focus:border-gray-02 block pl-4 pr-16'
-        placeholder={placeholder}
-      />
+      <div className='bg-white flex justify-start items-center w-full h-10 text-gray-900 rounded-lg text-gray-02 pl-4 pr-16'>
+        {placeholder}
+      </div>
     </div>
   );
 }

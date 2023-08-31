@@ -7,6 +7,8 @@ import Search from '../ui/Search';
 import { getCurrentDateTimeString } from '@/utils/date';
 import useSWR from 'swr';
 import { useEffect, useState } from 'react';
+import Spinner from '@/components/common/Spinner';
+import Link from 'next/link';
 const fetcher = (url: string) =>
   axios
     .get(url, {
@@ -24,7 +26,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [longitude, setLongitude] = useState<number>();
 
   const { data, isLoading } = useSWR(
-    `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}`,
+    () =>
+      latitude &&
+      longitude &&
+      `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}`,
     fetcher
   );
 
@@ -35,7 +40,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  if (isLoading) return <div>loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+
+  if (!data) return null;
 
   return (
     <div className='relative flex w-full flex-col justify-start items-center'>
@@ -72,7 +84,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <FixedBottom>
-        <Button>새로운 일정 추가</Button>
+        <Link className='w-full' href='/form'>
+          <Button>새로운 일정 추가</Button>
+        </Link>
       </FixedBottom>
     </div>
   );
