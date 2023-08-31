@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals"
+  ],
+  "rules": {
+    "no-unused-vars": "off",
+    "react/react-in-jsx-scope": "off", // 'React' must be in scope when using JSX 에러 해결 (Next.js)
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }], // ts파일에서 tsx구문 허용 (Next.js)
+    /* typescript-eslint */
+    "@typescript-eslint/ban-types": "off", // {} 타입 허용
+    "@typescript-eslint/no-explicit-any": "warn", // any 타입 경고
+    "@typescript-eslint/no-unused-vars": "warn"
+  }
+}
