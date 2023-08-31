@@ -19,9 +19,11 @@ export default function Page() {
 
   const longitude = searchParams.get('longitude');
   const latitude = searchParams.get('latitude');
+  const originName = searchParams.get('originName');
+  const origin = searchParams.get('origin');
 
-  const destinationName = searchParams.get('destinationName');
-  const destination = searchParams.get('destination');
+  const router = useRouter();
+
   const [query, setQuery] = useState('');
 
   const debouceQuery = useDebounce(query, 1000);
@@ -61,7 +63,7 @@ export default function Page() {
           <input
             onChange={(e) => setQuery(e.target.value)}
             value={query}
-            placeholder='출발지를 입력하세요'
+            placeholder='도착지를 입력하세요'
             className='focus:border-none focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-4 pr-16'
           />
         </div>
@@ -78,10 +80,10 @@ export default function Page() {
                 href={{
                   pathname: '/form',
                   query: {
-                    originName: document.place_name,
-                    origin: document.x + ' , ' + document.y,
-                    destinationName,
-                    destination,
+                    originName,
+                    origin,
+                    destinationName: document.place_name,
+                    destination: document.x + ' , ' + document.y,
                   },
                 }}
                 key={document.id}>
