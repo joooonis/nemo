@@ -27,9 +27,7 @@ export default function Page() {
     );
 
   const handleShareLink = () => {
-    navigator.clipboard.writeText(
-      `${process.env.NEXT_PUBLIC_WEB_URL}/form/new?id=${id}`
-    );
+    navigator.clipboard.writeText(`nemo-pied.vercel.app/form/new?id=${id}`);
   };
 
   return (
