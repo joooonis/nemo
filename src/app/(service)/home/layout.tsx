@@ -9,14 +9,7 @@ import useSWR from 'swr';
 import { useEffect, useState } from 'react';
 import Spinner from '@/components/common/Spinner';
 import Link from 'next/link';
-const fetcher = (url: string) =>
-  axios
-    .get(url, {
-      headers: {
-        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_URL}`,
-      },
-    })
-    .then((res) => res.data);
+import { fetcherKakao } from '@/utils/swrFetcher';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [currentDateTime, setCurrentDateTime] = useState(
@@ -30,11 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       latitude &&
       longitude &&
       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}`,
-    fetcher
-  );
-
-  const { data: userData } = useSWR(
-    'http://52.78.165.207:8080/api/v1/schedules'
+    fetcherKakao
   );
 
   const userLocation = data?.documents[0].address_name;
@@ -78,16 +67,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {userLocation}
         </h3>
         <div className='space-y-2'>
-          <div className='w-full'>
-            <Link
-              href={{
-                pathname: '/departure',
-                query: { latitude, longitude },
-              }}
-              className='w-full'>
-              <Search placeholder={userLocation} />
-            </Link>
-          </div>
           <div className='w-full'>
             <Link
               href={{
