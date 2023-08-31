@@ -1,45 +1,100 @@
+'use client';
+import { format } from 'date-fns';
+
+import {
+  caclulateTimeDifference,
+  dateToFormatString,
+  dateToTimeString,
+} from '@/utils/date';
+import { fetcher } from '@/utils/swrFetcher';
+import useSWR from 'swr';
+import { Schedule } from '@/types';
 
 export default function Page() {
+  const { data: schedules } = useSWR<Schedule[]>(
+    'http://52.78.165.207:8080/api/v1/schedules',
+    fetcher
+  );
+
+  const recentSchedule = schedules?.sort(
+    (a, b) =>
+      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
+  )[0];
+
+  const record: Record<string, Schedule[]> = {};
+
+  schedules?.slice(1)?.forEach((schedule) => {
+    const date = format(new Date(schedule.departureTime), 'yyyy-MM-dd');
+    if (record[date]) {
+      record[date].push(schedule);
+    } else {
+      record[date] = [schedule];
+    }
+  });
+
   return (
     <div className='relative flex w-full flex-col justify-start items-center'>
-      <h3 className='text-xl w-full'>
-        출발예정시간이
-        <span className='text-primary-main font-bold'> 1시간 25분</span>
-        남았어요!
-      </h3>
-      <div className='w-full mt-4'>
-        <RecentPromiseCard />
-      </div>
+      {recentSchedule && (
+        <div className='flex flex-col w-full justify-between items-center'>
+          <h3 className='text-xl w-full flex items-center'>
+            출발예정시간이&nbsp;
+            <span className='text-primary-main font-bold'>
+              {caclulateTimeDifference(
+                new Date(recentSchedule.departureTime),
+                new Date(recentSchedule.arrivalTime)
+              )}
+            </span>
+            &nbsp;남았어요!
+          </h3>
+          <div className='w-full mt-4'>
+            {recentSchedule && <RecentPromiseCard schedule={recentSchedule} />}
+          </div>
+        </div>
+      )}
+
       <div className='mt-4 flex w-full flex-col justify-start items-center space-y-6'>
-        <Card />
-        <Card />
-        <Card />
+        {Object.keys(record).map((date) => (
+          <div key={date} className='flex flex-col w-full space-y-4'>
+            <p className='text-sm text-left font-bold w-full'>
+              {dateToFormatString(new Date(date))}
+            </p>
+            <div className='flex flex-col w-full space-y-4'>
+              {record[date].map((schedule) => (
+                <Card key={schedule.commonScheduleId} schedule={schedule} />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+interface CardProps {
+  schedule: Schedule;
+}
 
-const Card = () => {
+const Card = ({ schedule }: CardProps) => {
+  const { name, originName, departureTime, destinationName, arrivalTime } =
+    schedule;
   return (
     <div className='flex w-full flex-col items-center '>
-      <p className='text-sm text-left font-bold w-full'>내일</p>
       <div className='mt-3 w-full drop-shadow-md bg-white rounded-2xl p-4 flex flex-col items-center'>
         <div className='flex justify-between items-center w-full'>
           <p className='text-primary-main text-xs font-bold'>
-            오늘 오전 10시 30분 출발
+            {dateToFormatString(new Date(departureTime))} 출발
           </p>
           <p className='text-gray-02 text-xs flex justify-between items-center'>
-            오후 12:00
+            {dateToTimeString(new Date(arrivalTime))}
           </p>
         </div>
-        <h2 className='w-full font-bold text-xl mt-2'>네모톤</h2>
+        <h2 className='w-full font-bold text-xl mt-2'>{name}</h2>
         <div className='flex justify-between items-center w-full mt-2 space-x-2'>
           <div className='grow flex flex-col justify-between items-center h-16'>
             <p className='bg-background-white rounded-sm w-full py-1 px-2 text-gray-02 text-sm'>
-              서울시 성북구 동선동 4가
+              {originName}
             </p>
             <p className='bg-background-white rounded-sm w-full py-1 px-2 text-gray-02 text-sm'>
-              서울시 강남구 반포로 1-14
+              {destinationName}
             </p>
           </div>
           <div className='flex justify-center items-center bg-background-white rounded-md aspect-square w-16 h-16 m-auto'>
@@ -61,26 +116,29 @@ const Card = () => {
   );
 };
 
-const RecentPromiseCard = () => {
+const RecentPromiseCard = ({ schedule }: CardProps) => {
+  const { name, originName, departureTime, destinationName, arrivalTime } =
+    schedule;
+
   return (
     <div className='flex w-full flex-col items-center '>
       <div className='w-full drop-shadow-md bg-black rounded-2xl p-4 flex flex-col items-center'>
         <div className='flex justify-between items-center w-full'>
           <p className='text-primary-main text-xs font-bold'>
-            오늘 오전 10시 30분 출발
+            {dateToFormatString(new Date(departureTime))} 출발
           </p>
           <p className='text-gray-02 text-xs flex justify-between items-center'>
-            오후 12:00
+            {dateToTimeString(new Date(arrivalTime))}
           </p>
         </div>
-        <h2 className='w-full font-bold text-xl mt-2 text-white'>네모톤</h2>
+        <h2 className='w-full font-bold text-xl mt-2 text-white'>{name}</h2>
         <div className='flex justify-between items-center w-full mt-2 space-x-2'>
           <div className='grow flex flex-col justify-between items-center h-16'>
             <p className='bg-[#3E3E3E80] rounded-sm w-full py-1 px-2 text-gray-02 text-sm'>
-              서울시 성북구 동선동 4가
+              {originName}
             </p>
             <p className='bg-[#3E3E3E80] rounded-sm w-full py-1 px-2 text-gray-02 text-sm'>
-              서울시 강남구 반포로 1-14
+              {destinationName}
             </p>
           </div>
           <div className='flex justify-center items-center bg-gray-01 rounded-md aspect-square w-16 h-16 m-auto'>
