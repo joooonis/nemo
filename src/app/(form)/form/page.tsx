@@ -60,7 +60,7 @@ export default function Page() {
     sendRequest,
     {
       onSuccess: (data) => {
-        console.log(data);
+        router.push(`/form/common/?id=${data.commonScheduleId}`);
       },
     }
   );

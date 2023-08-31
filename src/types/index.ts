@@ -6,4 +6,5 @@ export interface Schedule {
   departureTime: string;
   destinationName: string;
   arrivalTime: string;
+  memo?: string;
 }

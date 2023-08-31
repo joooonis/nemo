@@ -1,23 +1,38 @@
+'use client';
 import { format } from 'date-fns';
 
 import { caclulateTimeDifference, dateToFormatString } from '@/utils/date';
+import { fetcher } from '@/utils/swrFetcher';
+import useSWR from 'swr';
 import { Schedule } from '@/types';
-import { Suspense } from 'react';
-import Spinner from '@/components/common/Spinner';
-import Card from '../ui/Card';
 import RecentCard from '../ui/RecentCard';
+import Card from '../ui/Card';
 
-export default async function Page() {
-  const record = await getSchedulesMap();
-  const recentSchedule = await getRecentSchedule();
+export default function Page() {
+  const { data: schedules } = useSWR<Schedule[]>(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`,
+    fetcher
+  );
+
+  const recentSchedule = schedules?.sort(
+    (a, b) =>
+      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
+  )[0];
+
+  const record: Record<string, Schedule[]> = {};
+
+  schedules?.slice(1)?.forEach((schedule) => {
+    const date = format(new Date(schedule.departureTime), 'yyyy-MM-dd');
+    if (record[date]) {
+      record[date].push(schedule);
+    } else {
+      record[date] = [schedule];
+    }
+  });
+
   return (
-    <Suspense
-      fallback={
-        <div className='w-full flex justify-center items-center'>
-          <Spinner />
-        </div>
-      }>
-      <div className='relative flex w-full flex-col justify-start items-center'>
+    <div className='relative flex w-full flex-col justify-start items-center'>
+      {recentSchedule && (
         <div className='flex flex-col w-full justify-between items-center'>
           <h3 className='text-xl w-full flex items-center'>
             출발예정시간이&nbsp;
@@ -33,57 +48,22 @@ export default async function Page() {
             {recentSchedule && <RecentCard schedule={recentSchedule} />}
           </div>
         </div>
-        <div className='mt-4 flex w-full flex-col justify-start items-center space-y-6'>
-          {Object.keys(record).map((date) => (
-            <div key={date} className='flex flex-col w-full'>
-              <p className='text-sm text-left font-bold w-full'>
-                {dateToFormatString(new Date(date))}
-              </p>
-              <div className='flex flex-col w-full mt-2 space-y-4'>
-                {record[date].map((schedule) => (
-                  <Card key={schedule.departureTime} schedule={schedule} />
-                ))}
-              </div>
+      )}
+
+      <div className='mt-4 flex w-full flex-col justify-start items-center space-y-6'>
+        {Object.keys(record).map((date) => (
+          <div key={date} className='flex flex-col w-full space-y-4'>
+            <p className='text-sm text-left font-bold w-full'>
+              {dateToFormatString(new Date(date))}
+            </p>
+            <div className='flex flex-col w-full space-y-4'>
+              {record[date].map((schedule) => (
+                <Card key={schedule.commonScheduleId} schedule={schedule} />
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </Suspense>
+    </div>
   );
-}
-
-async function getSchedulesMap(): Promise<Record<string, Schedule[]>> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`
-  );
-  const schedules: Schedule[] = await res.json();
-  schedules.sort(
-    (a, b) =>
-      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
-  );
-  const record: Record<string, Schedule[]> = {};
-  schedules?.slice(1)?.forEach((schedule) => {
-    const date = format(new Date(schedule.departureTime), 'yyyy-MM-dd');
-    if (record[date]) {
-      record[date].push(schedule);
-    } else {
-      record[date] = [schedule];
-    }
-  });
-
-  return record;
-}
-
-async function getRecentSchedule(): Promise<Schedule> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`,
-    { next: { revalidate: 3600 } }
-  );
-  const schedules: Schedule[] = await res.json();
-  const recentSchedule = schedules?.sort(
-    (a, b) =>
-      new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime()
-  )[0];
-
-  return recentSchedule;
 }

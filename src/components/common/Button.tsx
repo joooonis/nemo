@@ -13,7 +13,7 @@ function Button({ variant = 'solid', children, ...props }: ButtonProps) {
       ${
         variant === 'solid'
           ? 'bg-primary-main text-white'
-          : 'bg-white hover:bg-gray-100 outline outline-1 outline-primary-main'
+          : 'bg-white text-primary-main hover:bg-gray-100 outline outline-1 outline-primary-main'
       }`,
         'disabled:bg-gray-03 disabled:cursor-not-allowed',
         'w-full font-medium h-[54px] rounded-2xl hover:opacity-80 text-lg transition duration-200'
