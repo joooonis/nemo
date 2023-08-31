@@ -1,3 +1,4 @@
+'use client';
 import axios from 'axios';
 import Button from '@/components/common/Button';
 import FixedBottom from '../ui/FixedBottom';
@@ -5,7 +6,7 @@ import FixedTop from '../ui/FixedTop';
 import Search from '../ui/Search';
 import { getCurrentDateTimeString } from '@/utils/date';
 import useSWR from 'swr';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 const fetcher = (url: string) =>
   axios
     .get(url, {
@@ -15,23 +16,31 @@ const fetcher = (url: string) =>
     })
     .then((res) => res.data);
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // const { data, isLoading } = useSWR(
-  //   'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.108622&y=37.401219',
-  //   fetcher
-  // );
-  const data = await getData();
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const [currentDateTime, setCurrentDateTime] = useState(
+    getCurrentDateTimeString()
+  );
+  const [latitude, setLatitude] = useState<number>();
+  const [longitude, setLongitude] = useState<number>();
+
+  const { data, isLoading } = useSWR(
+    `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}`,
+    fetcher
+  );
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  }, []);
+
+  if (isLoading) return <div>loading...</div>;
 
   return (
     <div className='relative flex w-full flex-col justify-start items-center'>
       <FixedTop>
-        <h2 className='text-lg text-white font-bold'>
-          {getCurrentDateTimeString()}
-        </h2>
+        <h2 className='text-lg text-white font-bold'>{currentDateTime}</h2>
         <h3 className='flex mt-2 mb-4 justify-start items-center text-gray-02'>
           <span className='mr-2'>
             <svg
@@ -52,14 +61,10 @@ export default async function Layout({
         </h3>
         <div className='space-y-2'>
           <div className='w-full'>
-            <Link href={'/search/departure'}>
-              <Search placeholder={data.documents[0].address_name} />
-            </Link>
+            <Search placeholder={data.documents[0].address_name} />
           </div>
           <div className='w-full'>
-            <Link href={'/search/arrival'}>
-              <Search placeholder='목적지를 입력해주세요' />
-            </Link>
+            <Search placeholder='목적지를 입력해주세요' />
           </div>
         </div>
       </FixedTop>
@@ -73,21 +78,21 @@ export default async function Layout({
   );
 }
 
-async function getData() {
-  const res = await fetch(
-    'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.106601&y=37.399362',
-    {
-      headers: {
-        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_URL}`,
-      },
-    }
-  );
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data');
-  }
+// async function getData() {
+//   const res = await fetch(
+//     'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.106601&y=37.399362',
+//     {
+//       headers: {
+//         Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_URL}`,
+//       },
+//     }
+//   );
+//   if (!res.ok) {
+//     // This will activate the closest `error.js` Error Boundary
+//     throw new Error('Failed to fetch data');
+//   }
 
-  const data = res.json();
+//   const data = res.json();
 
-  return data;
-}
+//   return data;
+// }
