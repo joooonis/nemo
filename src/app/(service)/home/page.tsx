@@ -53,7 +53,9 @@ export default async function Page() {
 }
 
 async function getSchedulesMap(): Promise<Record<string, Schedule[]>> {
-  const res = await fetch('http://52.78.165.207:8080/api/v1/schedules');
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`
+  );
   const schedules: Schedule[] = await res.json();
   const record: Record<string, Schedule[]> = {};
   schedules?.slice(1)?.forEach((schedule) => {
@@ -69,7 +71,9 @@ async function getSchedulesMap(): Promise<Record<string, Schedule[]>> {
 }
 
 async function getRecentSchedule(): Promise<Schedule> {
-  const res = await fetch('http://52.78.165.207:8080/api/v1/schedules');
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`
+  );
   const schedules: Schedule[] = await res.json();
   return schedules[0];
 }

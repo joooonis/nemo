@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { fetcherKakao } from '@/utils/swrFetcher';
 export default function Page() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [latitude, setLatitude] = useState<number>();
   const [longitude, setLongitude] = useState<number>();
@@ -16,7 +17,6 @@ export default function Page() {
   const origin = searchParams.get('origin');
 
   const [query, setQuery] = useState('');
-  const router = useRouter();
   const debouceQuery = useDebounce(query, 1000);
 
   const { data, isLoading } = useSWR(
@@ -82,7 +82,7 @@ export default function Page() {
             onChange={(e) => setQuery(e.target.value)}
             value={query}
             placeholder='도착지를 입력하세요'
-            className='focus:border-none  text-base placeholder:font-normal placeholder:text-base focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-8 pr-16'
+            className='focus:border-none text-base placeholder:font-normal placeholder:text-base focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-8 pr-16'
           />
         </div>
       </header>

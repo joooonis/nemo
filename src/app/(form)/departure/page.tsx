@@ -1,6 +1,6 @@
 'use client';
 import useSWR from 'swr';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 import Spinner from '@/components/common/Spinner';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { fetcherKakao } from '@/utils/swrFetcher';
 export default function Page() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [latitude, setLatitude] = useState<number>();
   const [longitude, setLongitude] = useState<number>();
@@ -41,6 +42,24 @@ export default function Page() {
       <header className='z-10 flex text-lg fixed max-w-xl top-0 p-4 font-semibold items-center bg-black justify-between w-full'>
         <div className='relative w-full'>
           <div
+            onClick={() => router.back()}
+            className='absolute inset-y-0 left-0 flex items-center pl-1.5 pointer-events-none'>
+            <svg
+              width='24'
+              height='24'
+              viewBox='0 0 24 24'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'>
+              <path
+                d='M15 18L9 12L15 6'
+                stroke='#7B7B7B'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </div>
+          <div
             onClick={() => setQuery('')}
             className='absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none'>
             <svg
@@ -63,7 +82,7 @@ export default function Page() {
             onChange={(e) => setQuery(e.target.value)}
             value={query}
             placeholder='출발지를 입력하세요'
-            className='focus:border-none focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-4 pr-16'
+            className='focus:border-none text-base placeholder:font-normal placeholder:text-base focus:outline-none bg-white font-normal flex justify-start items-center w-full h-12 text-gray-900 rounded-xl text-gray-02 pl-8 pr-16'
           />
         </div>
       </header>

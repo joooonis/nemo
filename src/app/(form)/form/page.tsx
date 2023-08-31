@@ -2,8 +2,9 @@
 
 import Button from '@/components/common/Button';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import useSWRMutation from 'swr/mutation';
 
 interface Inputs {
   name: string;
@@ -16,9 +17,26 @@ interface Inputs {
   memo: string;
 }
 
+async function sendRequest(
+  url: string,
+  {
+    arg,
+  }: {
+    arg: any;
+  }
+) {
+  return fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(arg),
+  }).then((res) => res.json());
+}
+
 export default function Page() {
   const searchParams = useSearchParams();
-
+  const router = useRouter();
   const originName = searchParams.get('originName');
   const origin = searchParams.get('origin');
   const destinationName = searchParams.get('destinationName');
@@ -37,7 +55,38 @@ export default function Page() {
     },
   });
 
-  const onSubmit = (data: Inputs) => console.log(data);
+  const { trigger, isMutating } = useSWRMutation(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedules`,
+    sendRequest,
+    {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+    }
+  );
+
+  const onSubmit = (data: Inputs) => {
+    const {
+      name,
+      arrivalDate,
+      arrivalTime,
+      memo,
+      origin,
+      originName,
+      destination,
+      destinationName,
+    } = data;
+
+    trigger({
+      arrivalTime: `${arrivalDate} ${arrivalTime}:00`,
+      name,
+      origin,
+      originName,
+      destination,
+      destinationName,
+      memo,
+    });
+  };
 
   return (
     <div className='relativ flex w-full flex-col justify-start items-center'>
