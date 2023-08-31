@@ -13,7 +13,7 @@ const Spacing = memo(function Spacing({
 }: Props) {
   return (
     <div
-      className={`bg-neutral-100 w-[calc(100%+32px)] ${
+      className={`w-[calc(100%+32px)] ${
         direction === 'horizontal' ? `w-${size}` : ''
       } ${direction === 'vertical' ? `h-${size}` : ''}`}
       {...props}

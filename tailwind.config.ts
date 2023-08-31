@@ -25,6 +25,7 @@ const config: Config = {
         background: {
           white: '#F4F6F5',
         },
+        line: '#DDDDDD',
       },
     },
     boxShadow: {

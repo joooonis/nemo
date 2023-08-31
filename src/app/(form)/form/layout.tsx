@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         일정 등록
         <span className='w-6 h-6' />
       </header>
-      <div className='flex w-full flex-col justify-start items-center mt-14'>
+      <div className='flex w-full flex-col justify-start items-center mt-4'>
         {children}
       </div>
       <div className='flex fixed  max-w-xl bottom-0 justify-between px-4 pb-6 w-full'>
