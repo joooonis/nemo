@@ -6,9 +6,12 @@ import { useForm } from 'react-hook-form';
 
 interface Inputs {
   name: string;
+  arrivalDate: string;
   arrivalTime: string;
   originName: string;
+  origin: string;
   destinationName: string;
+  destination: string;
   memo: string;
 }
 
@@ -21,6 +24,9 @@ export default function Page() {
   } = useForm<Inputs>({
     defaultValues: {
       originName: searchParams.get('originName') || '',
+      origin: searchParams.get('origin') || '',
+      destinationName: searchParams.get('destinationName') || '',
+      destination: searchParams.get('destination') || '',
     },
   });
   const onSubmit = (data: Inputs) => console.log(data);
@@ -41,15 +47,26 @@ export default function Page() {
           className='py-3 px-4 focus:border text-center block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
         <label
-          htmlFor='date'
+          htmlFor='arrivalDate'
           className='text-gray-02 text-sm w-full text-left mt-9'>
-          날짜와 시간
+          날짜
+        </label>
+        <input
+          {...register('arrivalDate', { required: true })}
+          id='arrivalDate'
+          type='date'
+          className='mt-1.5 py-3 px-4  text-center block w-full border border-line placeholder:text-gray-03 focus:border focus:outline-none rounded-xl text-sm focus:border-primary-main'
+        />
+        <label
+          htmlFor='arrivalTime'
+          className='text-gray-02 text-sm w-full text-left mt-2'>
+          시간
         </label>
         <input
           {...register('arrivalTime', { required: true })}
-          id='date'
-          type='date'
-          className='mt-1.5 py-3 px-4 focus:border text-center block w-full border border-line placeholder:text-gray-03 focus:outline-none rounded-xl text-sm focus:border-primary-main'
+          id='arrivalTime'
+          type='time'
+          className='mt-1.5 py-3 px-4  text-center block w-full border border-line placeholder:text-gray-03 focus:border focus:outline-none rounded-xl text-sm focus:border-primary-main'
         />
         <label
           htmlFor='destinationName'
@@ -94,18 +111,4 @@ export default function Page() {
 interface InputProps {
   placeholder?: string;
   size?: 'sm' | 'lg';
-}
-
-function Input({ size, placeholder }: InputProps) {
-  return (
-    <div className='relative w-full'>
-      <input
-        type='text'
-        className={`${
-          size === 'sm' ? 'h-7' : 'h-12'
-        } border-none focus:outline-none focus:border-transparent w-full text-gray-900 rounded-lg focus:border focus:ring-1 focus:ring-primary-main block pl-4 pr-16`}
-        placeholder={placeholder}
-      />
-    </div>
-  );
 }

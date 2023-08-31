@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   if (isLoading)
     return (
-      <div>
+      <div className='w-full flex justify-center items-center'>
         <Spinner />
       </div>
     );
@@ -75,14 +75,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </h3>
         <div className='space-y-2'>
           <div className='w-full'>
-            <Search placeholder={userLocation} />
+            <Link
+              href={{
+                pathname: '/departure',
+                query: { latitude, longitude },
+              }}
+              className='w-full'>
+              <Search placeholder={userLocation} />
+            </Link>
           </div>
           <div className='w-full'>
-            <Search placeholder='목적지를 입력해주세요' />
+            <Link
+              href={{
+                pathname: '/arrival',
+                query: { latitude, longitude },
+              }}
+              className='w-full'>
+              <Search placeholder='목적지를 입력해주세요' />
+            </Link>
           </div>
         </div>
       </FixedTop>
-      <div className='flex w-full flex-col justify-start items-center mt-48'>
+      <div className='flex w-full flex-col justify-start items-center'>
         {children}
       </div>
       <FixedBottom>
@@ -98,22 +112,3 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
-// async function getData() {
-//   const res = await fetch(
-//     'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.106601&y=37.399362',
-//     {
-//       headers: {
-//         Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_URL}`,
-//       },
-//     }
-//   );
-//   if (!res.ok) {
-//     // This will activate the closest `error.js` Error Boundary
-//     throw new Error('Failed to fetch data');
-//   }
-
-//   const data = res.json();
-
-//   return data;
-// }
