@@ -1,5 +1,4 @@
 'use client';
-import axios from 'axios';
 import Button from '@/components/common/Button';
 import FixedBottom from '../ui/FixedBottom';
 import FixedTop from '../ui/FixedTop';

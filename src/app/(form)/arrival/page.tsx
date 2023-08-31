@@ -1,19 +1,11 @@
 'use client';
 import useSWR from 'swr';
-import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 import Spinner from '@/components/common/Spinner';
 import Link from 'next/link';
-const fetcher = (url: string) =>
-  axios
-    .get(url, {
-      headers: {
-        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_URL}`,
-      },
-    })
-    .then((res) => res.data);
+import { fetcherKakao } from '@/utils/swrFetcher';
 export default function Page() {
   const searchParams = useSearchParams();
 
@@ -21,8 +13,6 @@ export default function Page() {
   const latitude = searchParams.get('latitude');
   const originName = searchParams.get('originName');
   const origin = searchParams.get('origin');
-
-  const router = useRouter();
 
   const [query, setQuery] = useState('');
 
@@ -32,7 +22,7 @@ export default function Page() {
     () =>
       debouceQuery &&
       `https://dapi.kakao.com/v2/local/search/keyword.json?x=${longitude}&y=${latitude}&query=${debouceQuery}`,
-    fetcher
+    fetcherKakao
   );
 
   const { documents } = data || {};
