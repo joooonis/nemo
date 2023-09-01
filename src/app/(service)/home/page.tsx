@@ -39,7 +39,7 @@ export default function Page() {
             <span className='text-primary-main font-bold'>
               {caclulateTimeDifference(
                 new Date(recentSchedule.departureTime),
-                new Date(recentSchedule.arrivalTime)
+                new Date()
               )}
             </span>
             &nbsp;남았어요!

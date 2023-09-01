@@ -26,8 +26,8 @@ function dateToFormatString(date: Date) {
   }
 }
 
-function caclulateTimeDifference(departureTime: Date, arrivalTime: Date) {
-  const timeDifference = arrivalTime.getTime() - departureTime.getTime();
+function caclulateTimeDifference(departureTime: Date, now: Date) {
+  const timeDifference = departureTime.getTime() - now.getTime();
   const hours = Math.floor(timeDifference / 1000 / 60 / 60);
   const minutes = Math.floor((timeDifference / 1000 / 60 / 60 - hours) * 60);
 
