@@ -1,7 +1,11 @@
 'use client';
 import { format } from 'date-fns';
 
-import { caclulateTimeDifference, dateToFormatString } from '@/utils/date';
+import {
+  caclulateTimeDifference,
+  dateToFormatDayString,
+  dateToFormatString,
+} from '@/utils/date';
 import { fetcher } from '@/utils/swrFetcher';
 import useSWR from 'swr';
 import { Schedule } from '@/types';
@@ -54,7 +58,7 @@ export default function Page() {
         {Object.keys(record).map((date) => (
           <div key={date} className='flex flex-col w-full space-y-4'>
             <p className='text-sm text-left font-bold w-full'>
-              {dateToFormatString(new Date(date))}
+              {dateToFormatDayString(new Date(date))}
             </p>
             <div className='flex flex-col w-full space-y-4'>
               {record[date].map((schedule) => (

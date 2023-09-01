@@ -26,6 +26,25 @@ function dateToFormatString(date: Date) {
   }
 }
 
+function dateToFormatDayString(date: Date) {
+  const currentDate = new Date();
+  const formattedDate = format(date, 'MM월 dd일');
+
+  if (currentDate.getDate() === date.getDate()) {
+    return `오늘`;
+  }
+
+  if (currentDate.getDate() + 1 === date.getDate()) {
+    return `내일`;
+  }
+
+  if (currentDate.getDate() + 2 === date.getDate()) {
+    return `모레`;
+  } else {
+    return formattedDate;
+  }
+}
+
 function caclulateTimeDifference(departureTime: Date, now: Date) {
   const timeDifference = departureTime.getTime() - now.getTime();
   const hours = Math.floor(timeDifference / 1000 / 60 / 60);
@@ -42,6 +61,7 @@ function dateToTimeString(date: Date) {
 
 export {
   getCurrentDateTimeString,
+  dateToFormatDayString,
   dateToFormatString,
   dateToTimeString,
   caclulateTimeDifference,
